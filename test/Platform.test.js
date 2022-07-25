@@ -29,6 +29,7 @@ describe("Platform", () => {
   it("deploys a contract", () => {
     assert.ok(platform.options.address);
   });
+
   it("can retrieve an existing post", async () => {
     try {
       const post = await platform.methods.retrievePost(TEST_ID).call();
@@ -37,6 +38,7 @@ describe("Platform", () => {
       assert(false);
     }
   });
+
   it("can apply to a post", async () => {
     try {
       await platform.methods
@@ -48,6 +50,7 @@ describe("Platform", () => {
       assert(false);
     }
   });
+
   it("author can select a winner", async () => {
     try {
       await platform.methods
@@ -62,6 +65,7 @@ describe("Platform", () => {
       assert(false);
     }
   });
+
   it("others cant select a winner", async () => {
     try {
       await platform.methods
@@ -71,6 +75,42 @@ describe("Platform", () => {
         .selectWinner(TEST_ID, accounts[2])
         .send({ from: accounts[1], value: 0 });
       assert(false);
+    } catch (error) {
+      assert(error);
+    }
+  });
+
+  it("author can release the reward", async () => {
+    try {
+      await platform.methods
+        .applyToPost(TEST_ID, TEST_DESC)
+        .send({ from: accounts[1], value: 0 });
+      await platform.methods
+        .selectWinner(TEST_ID, accounts[1])
+        .send({ from: accounts[0], value: 0 });
+      await platform.methods.releaseReward(TEST_ID).send({
+        from: accounts[0],
+        value: 0,
+      });
+      const post = await platform.methods.retrievePost(TEST_ID).call();
+      assert.equal(post.status, "DONE");
+    } catch (error) {
+      assert(false);
+    }
+  });
+
+  it("others cant release the reward", async () => {
+    try {
+      await platform.methods
+        .applyToPost(TEST_ID, TEST_DESC)
+        .send({ from: accounts[1], value: 0 });
+      await platform.methods
+        .selectWinner(TEST_ID, accounts[1])
+        .send({ from: accounts[0], value: 0 });
+      await platform.methods.releaseReward(TEST_ID).send({
+        from: accounts[3],
+        value: 0,
+      });
     } catch (error) {
       assert(error);
     }
