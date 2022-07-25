@@ -30,23 +30,49 @@ describe("Platform", () => {
     assert.ok(platform.options.address);
   });
   it("can retrieve an existing post", async () => {
-    const post = await platform.methods.retrievePost(TEST_ID).call();
-    assert.ok(post);
+    try {
+      const post = await platform.methods.retrievePost(TEST_ID).call();
+      assert.ok(post);
+    } catch (error) {
+      assert(false);
+    }
   });
   it("can apply to a post", async () => {
-    await platform.methods
-      .applyToPost(TEST_ID, TEST_DESC)
-      .send({ from: accounts[1], value: 0 });
-    const post = await platform.methods.retrievePost(TEST_ID).call();
-    assert.equal(post.candidatures[0].author, accounts[1]);
+    try {
+      await platform.methods
+        .applyToPost(TEST_ID, TEST_DESC)
+        .send({ from: accounts[1], value: 0 });
+      const post = await platform.methods.retrievePost(TEST_ID).call();
+      assert.equal(post.candidatures[0].author, accounts[1]);
+    } catch (error) {
+      assert(false);
+    }
   });
-  //   it("has a default message", async () => {
-  //     const message = await inbox.methods.message().call();
-  //     assert.equal(message, "Hi there!");
-  //   });
-  //   it("can change the message", async () => {
-  //     await inbox.methods.setMessage("bye").send({ from: accounts[0] });
-  //     const message = await inbox.methods.message().call();
-  //     assert.equal(message, "bye");
-  //   });
+  it("author can select a winner", async () => {
+    try {
+      await platform.methods
+        .applyToPost(TEST_ID, TEST_DESC)
+        .send({ from: accounts[1], value: 0 });
+      await platform.methods
+        .selectWinner(TEST_ID, accounts[1])
+        .send({ from: accounts[0], value: 0 });
+      const post = await platform.methods.retrievePost(TEST_ID).call();
+      assert.equal(post.winner, accounts[1]);
+    } catch (error) {
+      assert(false);
+    }
+  });
+  it("others cant select a winner", async () => {
+    try {
+      await platform.methods
+        .applyToPost(TEST_ID, TEST_DESC)
+        .send({ from: accounts[2], value: 0 });
+      await platform.methods
+        .selectWinner(TEST_ID, accounts[2])
+        .send({ from: accounts[1], value: 0 });
+      assert(false);
+    } catch (error) {
+      assert(error);
+    }
+  });
 });
