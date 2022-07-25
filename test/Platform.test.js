@@ -14,12 +14,21 @@ beforeEach(async () => {
     .deploy({
       data: bytecode,
     })
-    .send({ from: accounts[0], gas: "1000000" });
+    .send({ from: accounts[0], gas: "3000000" });
 });
 
 describe("Platform", () => {
   it("deploys a contract", () => {
     assert.ok(platform.options.address);
+  });
+  it("creates a post", async () => {
+    await platform.methods.createPost("asd", "title", "desc").send({
+      from: accounts[0],
+      value: web3.utils.toWei("0.01", "ether"),
+      gas: 3000000,
+    });
+    const post = await platform.methods.retrievePost("asd").call();
+    assert.ok(post);
   });
   //   it("has a default message", async () => {
   //     const message = await inbox.methods.message().call();
