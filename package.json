@@ -1,10 +1,12 @@
 {
-  "name": "middeo",
+  "name": "middeo-contract",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "compile": "node compile.js",
+    "deploy": "node deploy.js"
   },
   "keywords": [],
   "author": "",
