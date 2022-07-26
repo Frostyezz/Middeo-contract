@@ -12,13 +12,25 @@ contract Platform {
         string title;
         string description;
         address author;
+        uint[] tags;
+        uint posted;
         uint256 reward;
         Candidate[] candidatures;
         address winner;
         string status;
     }
 
+    struct User{
+        Id[] posts;
+        Id[] candidatures;
+    }
+
+    struct Id{
+        string id;
+    }
+
     mapping(string => Post) posts;
+    mapping(address => User) users;
 
     function createPost(
         string id,
@@ -30,10 +42,20 @@ contract Platform {
         posts[id].reward = msg.value;
         posts[id].author = msg.sender;
         posts[id].status = "OPEN";
+        posts[id].posted = now;
+        users[msg.sender].posts.push(Id({id:id}));
     }
 
     function retrievePost(string id) public view returns (Post) {
         return posts[id];
+    }
+
+    function retrieveUserPosts() public view returns (Id[]){
+        return users[msg.sender].posts;
+    }
+
+    function retrieveUserCandidatures() public view returns (Id[]){
+        return users[msg.sender].candidatures;
     }
 
     function applyToPost(string id, string proposal) public {

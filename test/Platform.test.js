@@ -30,6 +30,11 @@ describe("Platform", () => {
     assert.ok(platform.options.address);
   });
 
+  it("created post appears in the users instance", async () => {
+    const posts = await platform.methods.retrieveUserPosts().call();
+    assert.strictEqual(posts[0][0], TEST_ID);
+  });
+
   it("can retrieve an existing post", async () => {
     try {
       const post = await platform.methods.retrievePost(TEST_ID).call();
@@ -45,7 +50,7 @@ describe("Platform", () => {
         .applyToPost(TEST_ID, TEST_DESC)
         .send({ from: accounts[1], value: 0 });
       const post = await platform.methods.retrievePost(TEST_ID).call();
-      assert.equal(post.candidatures[0].author, accounts[1]);
+      assert.strictEqual(post.candidatures[0].author, accounts[1]);
     } catch (error) {
       assert(false);
     }
@@ -60,7 +65,7 @@ describe("Platform", () => {
         .selectWinner(TEST_ID, accounts[1])
         .send({ from: accounts[0], value: 0 });
       const post = await platform.methods.retrievePost(TEST_ID).call();
-      assert.equal(post.winner, accounts[1]);
+      assert.strictEqual(post.winner, accounts[1]);
     } catch (error) {
       assert(false);
     }
@@ -93,7 +98,7 @@ describe("Platform", () => {
         value: 0,
       });
       const post = await platform.methods.retrievePost(TEST_ID).call();
-      assert.equal(post.status, "DONE");
+      assert.strictEqual(post.status, "DONE");
     } catch (error) {
       assert(false);
     }
