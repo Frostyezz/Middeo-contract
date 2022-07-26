@@ -31,6 +31,7 @@ contract Platform {
 
     mapping(string => Post) posts;
     mapping(address => User) users;
+    Id[] postIds;
 
     function createPost(
         string id,
@@ -44,10 +45,15 @@ contract Platform {
         posts[id].status = "OPEN";
         posts[id].posted = now;
         users[msg.sender].posts.push(Id({id:id}));
+        postIds.push(Id({id:id}));
     }
 
     function retrievePost(string id) public view returns (Post) {
         return posts[id];
+    }
+
+    function retrievePostIds() public view returns (Id[]){
+        return postIds;
     }
 
     function retrieveUserPosts() public view returns (Id[]){

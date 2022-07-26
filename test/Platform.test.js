@@ -31,8 +31,21 @@ describe("Platform", () => {
   });
 
   it("created post appears in the users instance", async () => {
-    const posts = await platform.methods.retrieveUserPosts().call();
-    assert.strictEqual(posts[0][0], TEST_ID);
+    try {
+      const posts = await platform.methods.retrieveUserPosts().call();
+      assert.strictEqual(posts[0][0], TEST_ID);
+    } catch (error) {
+      assert(false);
+    }
+  });
+
+  it("updates the postIds", async () => {
+    try {
+      const posts = await platform.methods.retrievePostIds().call();
+      assert.strictEqual(posts.length, 1);
+    } catch (error) {
+      assert(false);
+    }
   });
 
   it("can retrieve an existing post", async () => {
